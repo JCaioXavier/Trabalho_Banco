@@ -1,0 +1,183 @@
+drop table produtos_ingredientes;
+
+drop table mesas_pedidos;
+
+drop table mesas;
+
+drop table pedidos;
+
+drop table funcionarios;
+
+drop table ingredientes;
+
+drop table clientes;
+
+drop table produtos;
+
+create table clientes(
+	id_cliente serial primary key,
+	nome varchar(250) not null,
+	telefone varchar(14) not null,
+	endereco text not null,
+	cpf char(11)
+);
+
+create table funcionarios(
+	id_funcionario serial primary key,
+	nome varchar(100) not null,
+	usuario varchar(100) not null,
+	senha varchar(15) not null
+);
+
+create table ingredientes(
+	id_ingrediente serial primary key,
+	estoque int not null,
+	nome varchar(100) not null
+);
+
+create table produtos(
+	id_produto serial primary key,
+	estoque int not null, 
+	preco numeric not null,
+	nome varchar(100) not null
+);
+
+create table produtos_ingredientes(
+    id_produto_ingrediente serial primary key,
+    id_ingrediente int references ingredientes(id_ingrediente),
+    quantidade int not null,
+    id_produto int references produtos(id_produto)
+);
+
+create table mesas(
+	id_mesa serial primary key,
+	numero int not null
+);
+
+create table pedidos(
+	id_pedido serial primary key,
+	id_cliente int references clientes(id_cliente),
+	id_produto int references produtos(id_produto),
+	id_funcionario int references funcionarios(id_funcionario),
+	tipo char(1) not null
+);
+
+create table mesas_pedidos (
+	id_mesa_pedido serial primary key,
+	id_mesa int references mesas(id_mesa),
+	id_pedido int references pedidos(id_pedido),
+	status char(2)
+);
+
+insert
+	into clientes(nome,
+	telefone,
+	endereco,
+	cpf)
+values
+	('José Caio','21987524321','Rua das Palmeiras Encantadas','12345678900'),
+	('Isabela Soares', '219812654321', 'Avenida Sol Nascente', '98765432111');
+
+insert
+	into funcionarios(nome,
+	usuario,
+	senha)
+values
+	('Thiago Novaes', 'titimoral', 'thigas123'),
+	('Lucas Almeida', 'lucas.almeida92', '@Lme12345!');
+
+insert
+	into ingredientes(estoque,
+	nome)
+values
+	('16', 'Pão'),
+	('35', 'Alface'),
+	('16', 'Hamburguer'),
+	('8', 'Picles'),
+	('11', 'Tomate'),
+	('14', 'Queijo'),
+	('13', 'Laranja'),
+	('7', 'Polpa de Morango'),
+	('9', 'Beterraba'),
+	('12', 'Cebola');
+
+insert
+	into produtos(estoque,
+	preco,
+	nome)
+values
+	('5', 10.00, 'Pastel de Queijo'),
+	('4', 8.00, 'Coxinha'),
+	('7', 6.50, 'Misto'),
+	('0', 15.20, 'Hambuguer'),
+	('3', 12.82, 'Guaraná Antartica 2L'),
+	('6', 3.70, 'Coca-Cola Lata 350 ml');
+
+insert 
+	into produtos_ingredientes(id_ingrediente, 
+	quantidade, 
+	id_produto)
+values
+	(6, 2, 3),
+	(1, 2, 3);
+	
+insert
+	into produtos_ingredientes(id_ingrediente,
+	quantidade,
+	id_produto)
+values
+	(5, 2, 4),
+	(4, 1, 4),
+	(1, 2, 4),
+	(6, 2, 4),
+	(2, 2, 4),
+	(10, 2, 4);
+
+
+insert
+	into mesas(numero)
+values
+	(1);
+
+insert
+	into pedidos(id_cliente,
+	id_produto,
+	id_funcionario,
+	tipo)
+values
+	(1, 4, 1, 'P'),
+	(2, 4, 1, 'E');
+
+insert
+	into mesas_pedidos(id_mesa,
+	id_pedido,
+	status)
+values
+	(1, 1, 'AP')
+
+insert
+	into mesas_pedidos(id_pedido,
+	status)
+values
+	(2, 'AP')
+	
+SELECT
+    c.id_cliente,
+    c.nome,
+    mp.id_mesa,
+    mp.status,
+    p.tipo
+FROM
+    clientes c
+JOIN
+    pedidos p ON c.id_cliente = p.id_cliente
+JOIN
+    mesas_pedidos mp ON p.id_pedido = mp.id_pedido
+WHERE
+    c.id_cliente = 1;
+
+SELECT c.*, mp.id_mesa, mp.status, p.tipo
+FROM clientes c
+JOIN pedidos p ON c.id_cliente = p.id_cliente
+JOIN mesas_pedidos mp ON p.id_pedido = mp.id_pedido
+WHERE c.id_cliente = 1;
